@@ -1,0 +1,41 @@
+replicaCount: 2
+
+labels:
+  app: nginx
+
+namespace: production
+
+image:
+  repository: grantcod/nginx-frontend
+  tag: v1.2
+  pullPolicy: IfNotPresent
+
+container:
+  name: nginx
+
+service:
+  port: 80
+  targetPort: 80
+
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+probes:
+  liveness:
+    path: /
+    initialDelaySeconds: 30
+    periodSeconds: 10
+  readiness:
+    path: /
+    initialDelaySeconds: 10
+    periodSeconds: 5
+
+serviceAccount:
+  name: nginx-sa
+

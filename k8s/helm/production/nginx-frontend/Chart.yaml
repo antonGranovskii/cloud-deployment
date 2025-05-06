@@ -1,0 +1,7 @@
+apiVersion: v2
+
+name: nginx-frontend
+
+description: A Helm chart to deploy a Nginx Web Server to production environment
+
+version: 0.1.0

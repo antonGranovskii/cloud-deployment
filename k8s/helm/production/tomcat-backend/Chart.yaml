@@ -1,0 +1,7 @@
+apiVersion: v2
+
+name: tomcat-backend
+
+description: A Helm chart to deploy a Java webapp on Tomcat to production environment
+
+version: 0.1.0

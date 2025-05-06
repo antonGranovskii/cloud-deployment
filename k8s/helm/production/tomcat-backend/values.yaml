@@ -1,0 +1,41 @@
+replicaCount: 2
+
+labels:
+  app: tomcat-backend
+
+namespace: production
+
+image:
+  repository: grantcod/tomcat-backend
+  tag: v1.0
+  pullPolicy: IfNotPresent
+
+container:
+  name: tomcat-backend
+
+service:
+  port: 8080
+  targetPort: 8080
+
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 200m
+    memory: 256Mi
+
+probes:
+  liveness:
+    path: /
+    initialDelaySeconds: 30
+    periodSeconds: 10
+  readiness:
+    path: /
+    initialDelaySeconds: 10
+    periodSeconds: 5
+
+serviceAccount:
+  name: tomcat-backend-sa
+
