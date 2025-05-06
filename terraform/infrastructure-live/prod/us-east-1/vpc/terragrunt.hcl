@@ -20,60 +20,11 @@ inputs = {
 
   private_subnet_tags = {
     "kubernetes.io/role/internal-elb" = 1
-    "kubernetes.io/cluster/prod"  = "owned"
+    "kubernetes.io/cluster/production"  = "owned"
   }
 
   public_subnet_tags = {
     "kubernetes.io/role/elb"         = 1
-    "kubernetes.io/cluster/prod" = "owned"
+    "kubernetes.io/cluster/production" = "owned"
   }
-  
-  sg_configs = [
-    {
-      name        = "${include.env.locals.env}-eks_nodes_sg"
-      description = "Allow internal node communication and TLS inbound traffic"
-      ingress_rules = [
-        {
-          from_port   = 0
-          to_port     = 65535
-          protocol    = "tcp"
-          cidr_blocks = ["0.0.0.0/0"]
-        }
-      ]
-      egress_rules = [
-        {
-          from_port   = 0
-          to_port     = 0
-          protocol    = "-1"
-          cidr_blocks = ["0.0.0.0/0"]
-        }
-      ]
-    },
-    {
-      name        = "${include.env.locals.env}-eks-lb-sg"
-      description = "Allow Load Balancer traffic"
-      ingress_rules = [
-        {
-          from_port   = 80
-          to_port     = 80
-          protocol    = "tcp"
-          cidr_blocks = ["0.0.0.0/0"]
-        },
-        {
-          from_port   = 8080
-          to_port     = 8080
-          protocol    = "tcp"
-          cidr_blocks = ["0.0.0.0/0"]
-        }
-      ]
-      egress_rules = [
-        {
-          from_port   = 0
-          to_port     = 0
-          protocol    = "-1"
-          cidr_blocks = ["0.0.0.0/0"]
-        }
-      ]
-    }
-  ]
 }
