@@ -23,7 +23,7 @@ inputs = {
   launch_template_version = "1"
 
   eks_worker_sg_tags = {
-    "kubernetes.io/cluster/prod" = "owned"
+    "kubernetes.io/cluster/production" = "owned"
   }
 
   node_groups = {
