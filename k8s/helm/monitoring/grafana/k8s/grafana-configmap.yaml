@@ -1,0 +1,113 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard
+  namespace: monitoring
+data:
+  k8s-cluster-monitoring.json: |
+    {
+      "title": "Kubernetes CPU & Memory Usage",
+      "uid": "k8s-cluster-cpu-memory-usage",
+      "tags": ["kubernetes", "cpu", "memory"],
+      "timezone": "browser",
+      "schemaVersion": 30,
+      "version": 1,
+      "panels": [
+        {
+          "title": "Cluster CPU Usage (%)",
+          "type": "timeseries",
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+              "refId": "A",
+              "legendFormat": "CPU Usage"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "decimals": 2,
+              "color": {
+                "mode": "palette-classic"
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": { "x": 0, "y": 0, "w": 24, "h": 8 }
+        },
+        {
+          "title": "Cluster Memory Usage (%)",
+          "type": "timeseries",
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "(1 - sum(node_memory_MemAvailable_bytes) / sum(node_memory_MemTotal_bytes)) * 100",
+              "refId": "B",
+              "legendFormat": "Memory Usage"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "decimals": 2,
+              "color": {
+                "mode": "palette-classic"
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": { "x": 0, "y": 8, "w": 24, "h": 8 }
+        }
+      ]
+    }
+
+  k8s-pods-monitoring.json: |
+    {
+      "title": "Production Pod CPU & Memory",
+      "uid": "prod-pod-cpu-mem",
+      "schemaVersion": 30,
+      "version": 1,
+      "timezone": "browser",
+      "panels": [
+        {
+          "title": "Production Pod CPU Usage (% of limit)",
+          "type": "timeseries",
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "sum(rate(container_cpu_usage_seconds_total{container_label_io_kubernetes_pod_namespace=\"production\", container_label_io_kubernetes_pod_name!=\"\"}[5m])) by (container_label_io_kubernetes_pod_name, container_label_io_kubernetes_container_name, container_label_io_kubernetes_pod_namespace) / sum(container_spec_cpu_quota{container_label_io_kubernetes_pod_namespace=\"production\", container_label_io_kubernetes_pod_name!=\"\"} / container_spec_cpu_period{container_label_io_kubernetes_pod_namespace=\"production\", container_label_io_kubernetes_pod_name!=\"\"}) by (container_label_io_kubernetes_pod_name, container_label_io_kubernetes_container_name, container_label_io_kubernetes_pod_namespace) * 100",
+              "refId": "A",
+              "legendFormat": "{{container_label_io_kubernetes_pod_namespace}}/{{container_label_io_kubernetes_pod_name}} ({{container_label_io_kubernetes_container_name}})"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "decimals": 1
+            }
+          },
+          "gridPos": { "x": 0, "y": 0, "w": 24, "h": 9 }
+        },
+        {
+          "title": "Production Pod Memory Usage (% of limit)",
+          "type": "timeseries",
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "(container_memory_working_set_bytes{container_label_io_kubernetes_pod_namespace=\"production\", container_label_io_cri_containerd_kind=\"container\", container_label_io_kubernetes_container_name!=\"\"}) / (container_spec_memory_limit_bytes{container_label_io_kubernetes_pod_namespace=\"production\", container_label_io_cri_containerd_kind=\"container\", container_label_io_kubernetes_container_name!=\"\"}) * 100",
+              "refId": "B",
+              "legendFormat": "{{container_label_io_kubernetes_pod_namespace}}/{{container_label_io_kubernetes_pod_name}} ({{container_label_io_kubernetes_container_name}})"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "decimals": 1
+            }
+          },
+          "gridPos": { "x": 0, "y": 9, "w": 24, "h": 9 }
+        }
+      ]
+    }

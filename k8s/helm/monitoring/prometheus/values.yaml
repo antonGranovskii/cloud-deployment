@@ -1,0 +1,25 @@
+alertmanager:
+  enabled: false
+
+nodeExporter:
+  enabled: true
+
+kubeStateMetrics:
+  enabled: false
+
+pushgateway:
+  enabled: false
+
+server:
+  persistentVolume:
+    enabled: false
+    
+extraScrapeConfigs: |
+  - job_name: 'cadvisor'
+    metrics_path: '/metrics'
+    kubernetes_sd_configs:
+      - role: service
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_service_label_k8s_app]
+        action: keep
+        regex: cadvisor

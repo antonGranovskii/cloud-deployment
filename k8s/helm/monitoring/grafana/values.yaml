@@ -1,0 +1,48 @@
+service:
+  type: LoadBalancer
+
+persistence:
+  enabled: false
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        url: http://prometheus-server.monitoring.svc.cluster.local:80
+        access: proxy
+        isDefault: true
+
+
+extraVolumes:
+  - name: grafana-dashboard
+    configMap:
+      name: grafana-dashboard
+
+extraVolumeMounts:
+  - name: grafana-dashboard
+    mountPath: /var/lib/grafana/dashboards/kubernetes
+    readOnly: true
+
+
+
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+      - name: kubernetes
+        orgId: 1
+        folder: Kubernetes
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/kubernetes
+
+dashboards:
+  default:
+    k8s-cluster-monitoring:
+      file: /var/lib/grafana/dashboards/kubernetes/k8s-cluster-monitoring.json
+    k8s-pods-monitoring:
+      file: /var/lib/grafana/dashboards/kubernetes/k8s-pods-monitoring.json
